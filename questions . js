@@ -1,0 +1,26 @@
+const questions = [
+    {
+        question: "What is the full form of HTML?",
+        a: "Hyper Trainer Marking Language",
+        b: "Hyper Text Markup Language",
+        c: "Hyper Text Marketing Language",
+        d: "High Text Markup Language",
+        correct: "b"
+    },
+    {
+        question: "Which tag is used to link a CSS file in HTML?",
+        a: "<css>",
+        b: "<style>",
+        c: "<link>",
+        d: "<script>",
+        correct: "c"
+    },
+    {
+        question: "Which language runs in a web browser?",
+        a: "Java",
+        b: "C++",
+        c: "Python",
+        d: "JavaScript",
+        correct: "d"
+    }
+];
