@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    #quiz-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .question {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .option {
+      margin: 8px 0;
+      padding: 10px;
+      background: #eee;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .option:hover {
+      background: #ddd;
+    }
+    #timer {
+      font-size: 22px;
+      font-weight: bold;
+      color: red;
+      text-align: right;
+      margin-bottom: 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .correct { color: green; }
+    .wrong { color: red; }
+  </style>
+</head>
+<body>
+
+<div id="quiz-box">
+  <div id="timer">Time Left: 60:00</div>
+  <div id="quiz"></div>
+  <button id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
+  <div id="result"></div>
+</div>
+
+<script src="questions.js"></script>
+
+<script>
+let quizData = [];
+let userAnswers = {};
+let timeLeft = 3600; // 1 hour
+
+// Start timer
+function startTimer() {
+  let timer = setInterval(() => {
+    let mins = Math.floor(timeLeft / 60);
+    let secs = timeLeft % 60;
+
+    document.getElementById("timer").innerHTML =
+      Time Left: ${mins}:${secs < 10 ? "0" + secs : secs};
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      submitQuiz();
+    }
+    timeLeft--;
+  }, 1000);
+}
+
+// Shuffle function
+function shuffleArray(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+// Load quiz
+window.onload = () => {
+  quizData = shuffleArray(questions).slice(0, 50); // pick 50 random questions
+  displayQuiz();
+  startTimer();
+};
+
+function displayQuiz() {
+  let quizContainer = document.getElementById("quiz");
+  quizContainer.innerHTML = "";
+
+  quizData.forEach((q, i) => {
+    let optionsHTML = shuffleArray(q.options).map(option => `
+      <div class="option" onclick="selectOption(${i}, '${option}')">
+        ${option}
+      </div>
+    `).join("");
+
+    quizContainer.innerHTML += `
+      <div class="question-box">
+        <p class="question">${i + 1}. ${q.question}</p>
+        ${optionsHTML}
+      </div>
+      <hr>
+    `;
+  });
+}
+
+function selectOption(qIndex, answer) {
+  userAnswers[qIndex] = answer;
+}
+
+function submitQuiz() {
+  let score = 0;
+  let resultHTML = "<h2>Your Results:</h2>";
+
+  quizData.forEach((q, i) => {
+    let userAnswer = userAnswers[i];
+    let isCorrect = userAnswer === q.correct;
+
+    if (isCorrect) score++;
+
+    resultHTML += `
+      <p>
+        <b>${i+1}. ${q.question}</b><br>
+        Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">
+          ${userAnswer || "Not answered"}
+        </span><br>
+        Correct answer: <span class="correct">${q.correct}</span>
+      </p>
+      <hr>
+    `;
+  });
+
+  document.getElementById("result").innerHTML =
+    <h2>Score: ${score} / ${quizData.length}</h2> + resultHTML;
+
+  document.getElementById("submitBtn").disabled = true;
+}
+</script>
+
+</body>
+</html>
